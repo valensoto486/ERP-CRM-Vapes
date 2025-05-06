@@ -6,67 +6,23 @@ import Ventas from "./pages/Ventas"
 import Soporte from "./pages/Soporte"
 import Reportes from "./pages/Reportes"
 import Login from "./pages/Login"
-import { AuthProvider } from "./context/AuthContext"
-import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
+  // Simulamos que el usuario está autenticado
+  const isAuthenticated = true
+
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/clientes"
-          element={
-            <ProtectedRoute>
-              <Clientes />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/proveedores"
-          element={
-            <ProtectedRoute>
-              <Proveedores />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/ventas"
-          element={
-            <ProtectedRoute>
-              <Ventas />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/soporte"
-          element={
-            <ProtectedRoute>
-              <Soporte />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reportes"
-          element={
-            <ProtectedRoute>
-              <Reportes />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </AuthProvider>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
+      <Route path="/clientes" element={isAuthenticated ? <Clientes /> : <Navigate to="/login" />} />
+      <Route path="/proveedores" element={isAuthenticated ? <Proveedores /> : <Navigate to="/login" />} />
+      <Route path="/ventas" element={isAuthenticated ? <Ventas /> : <Navigate to="/login" />} />
+      <Route path="/soporte" element={isAuthenticated ? <Soporte /> : <Navigate to="/login" />} />
+      <Route path="/reportes" element={isAuthenticated ? <Reportes /> : <Navigate to="/login" />} />
+    </Routes>
   )
 }
 
 export default App
-

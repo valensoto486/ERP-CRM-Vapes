@@ -1,37 +1,24 @@
 "use client"
 
-import { useState, useContext } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { FiPackage } from "react-icons/fi"
-import { AuthContext } from "../context/AuthContext"
 
 const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
-  const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setError("")
     setLoading(true)
 
-    try {
-      const success = await login(username, password)
-      if (success) {
-        navigate("/dashboard")
-      } else {
-        setError("Credenciales inválidas. Por favor, intente de nuevo.")
-      }
-    } catch (err) {
-      setError("Error al iniciar sesión. Por favor, intente de nuevo más tarde.")
-      console.error(err)
-    } finally {
+    // Simulamos un inicio de sesión después de 1 segundo
+    setTimeout(() => {
       setLoading(false)
-    }
+      navigate("/dashboard")
+    }, 1000)
   }
 
   return (
@@ -44,8 +31,6 @@ const Login = () => {
           <h2 className="mt-6 text-3xl font-bold text-white">Vape CRM</h2>
           <p className="mt-2 text-sm text-gray-400">Inicie sesión para acceder al sistema</p>
         </div>
-
-        {error && <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-md">{error}</div>}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">

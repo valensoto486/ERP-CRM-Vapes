@@ -1,20 +1,103 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import MainLayout from "../components/layout/MainLayout"
 import { FiPlus, FiSearch, FiEdit, FiTrash2, FiUser } from "react-icons/fi"
-import axios from "axios"
-import { API_URL } from "../config"
 
 const Clientes = () => {
-  const [clientes, setClientes] = useState([])
-  const [interacciones, setInteracciones] = useState([])
+  // Datos de ejemplo
+  const clientesData = [
+    {
+      id: 1,
+      nombre: "Juan Pérez",
+      email: "juan.perez@ejemplo.com",
+      telefono: "555-123-4567",
+      categoria: "frecuente",
+      ultimaCompra: "2023-04-15",
+      totalCompras: 12,
+      valorTotal: 1250.5,
+      notas: "Cliente frecuente de vaporizadores premium.",
+    },
+    {
+      id: 2,
+      nombre: "María López",
+      email: "maria.lopez@ejemplo.com",
+      telefono: "555-987-6543",
+      categoria: "mayorista",
+      ultimaCompra: "2023-04-10",
+      totalCompras: 45,
+      valorTotal: 5680.75,
+      notas: "Distribuidor para la zona norte.",
+    },
+    {
+      id: 3,
+      nombre: "Carlos Rodríguez",
+      email: "carlos.rodriguez@ejemplo.com",
+      telefono: "555-456-7890",
+      categoria: "ocasional",
+      ultimaCompra: "2023-03-22",
+      totalCompras: 3,
+      valorTotal: 320.25,
+      notas: "",
+    },
+    {
+      id: 4,
+      nombre: "Ana Martínez",
+      email: "ana.martinez@ejemplo.com",
+      telefono: "555-789-0123",
+      categoria: "frecuente",
+      ultimaCompra: "2023-04-18",
+      totalCompras: 8,
+      valorTotal: 950.0,
+      notas: "Prefiere productos con sabores frutales.",
+    },
+    {
+      id: 5,
+      nombre: "Roberto Gómez",
+      email: "roberto.gomez@ejemplo.com",
+      telefono: "555-234-5678",
+      categoria: "mayorista",
+      ultimaCompra: "2023-04-05",
+      totalCompras: 32,
+      valorTotal: 4200.5,
+      notas: "Distribuidor para tiendas especializadas.",
+    },
+  ]
+
+  const interaccionesData = [
+    {
+      id: 1,
+      clienteId: 1,
+      tipo: "llamada",
+      descripcion: "Llamada para informar sobre nuevos productos",
+      fecha: "2023-04-10",
+      usuario: "Admin",
+    },
+    {
+      id: 2,
+      clienteId: 1,
+      tipo: "email",
+      descripcion: "Envío de catálogo actualizado",
+      fecha: "2023-04-05",
+      usuario: "Admin",
+    },
+    {
+      id: 3,
+      clienteId: 2,
+      tipo: "visita",
+      descripcion: "Visita a su tienda para mostrar nuevos modelos",
+      fecha: "2023-04-12",
+      usuario: "Vendedor",
+    },
+  ]
+
+  const [clientes] = useState(clientesData)
+  const [interacciones] = useState(interaccionesData)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCliente, setSelectedCliente] = useState(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isNewInteractionDialogOpen, setIsNewInteractionDialogOpen] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("info")
 
   // Formulario para cliente
@@ -31,37 +114,6 @@ const Clientes = () => {
     tipo: "llamada",
     descripcion: "",
   })
-
-  useEffect(() => {
-    fetchClientes()
-  }, [])
-
-  useEffect(() => {
-    if (selectedCliente) {
-      fetchInteracciones(selectedCliente._id)
-    }
-  }, [selectedCliente])
-
-  const fetchClientes = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get(`${API_URL}/clientes`)
-      setClientes(response.data)
-    } catch (error) {
-      console.error("Error al obtener clientes:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchInteracciones = async (clienteId) => {
-    try {
-      const response = await axios.get(`${API_URL}/clientes/${clienteId}/interacciones`)
-      setInteracciones(response.data)
-    } catch (error) {
-      console.error("Error al obtener interacciones:", error)
-    }
-  }
 
   const handleSelectCliente = (cliente) => {
     setSelectedCliente(cliente)
@@ -105,52 +157,22 @@ const Clientes = () => {
     setIsDialogOpen(true)
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    try {
-      if (selectedCliente && isDialogOpen) {
-        // Actualizar cliente existente
-        await axios.put(`${API_URL}/clientes/${selectedCliente._id}`, formData)
-      } else {
-        // Crear nuevo cliente
-        await axios.post(`${API_URL}/clientes`, formData)
-      }
-      fetchClientes()
-      setIsDialogOpen(false)
-    } catch (error) {
-      console.error("Error al guardar cliente:", error)
-    }
+    // En una versión funcional, aquí se enviarían los datos al backend
+    setIsDialogOpen(false)
   }
 
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`${API_URL}/clientes/${selectedCliente._id}`)
-      fetchClientes()
-      setSelectedCliente(null)
-      setIsDeleteDialogOpen(false)
-    } catch (error) {
-      console.error("Error al eliminar cliente:", error)
-    }
+  const handleDelete = () => {
+    // En una versión funcional, aquí se eliminaría el cliente
+    setSelectedCliente(null)
+    setIsDeleteDialogOpen(false)
   }
 
-  const handleSubmitInteraccion = async (e) => {
+  const handleSubmitInteraccion = (e) => {
     e.preventDefault()
-    try {
-      await axios.post(`${API_URL}/clientes/${selectedCliente._id}/interacciones`, {
-        ...interaccionData,
-        clienteId: selectedCliente._id,
-        fecha: new Date().toISOString().split("T")[0],
-        usuario: "Usuario Actual",
-      })
-      fetchInteracciones(selectedCliente._id)
-      setIsNewInteractionDialogOpen(false)
-      setInteraccionData({
-        tipo: "llamada",
-        descripcion: "",
-      })
-    } catch (error) {
-      console.error("Error al guardar interacción:", error)
-    }
+    // En una versión funcional, aquí se guardaría la interacción
+    setIsNewInteractionDialogOpen(false)
   }
 
   // Filtrar clientes según término de búsqueda
@@ -206,67 +228,61 @@ const Clientes = () => {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <div className="table-container">
-              {loading ? (
-                <div className="flex justify-center items-center p-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
-              ) : (
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Email</th>
-                      <th>Teléfono</th>
-                      <th>Categoría</th>
-                      <th>Última Compra</th>
-                      <th></th>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Categoría</th>
+                    <th>Última Compra</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredClientes.map((cliente) => (
+                    <tr key={cliente.id} onClick={() => handleSelectCliente(cliente)}>
+                      <td className="font-medium text-white">{cliente.nombre}</td>
+                      <td className="text-gray-300">{cliente.email}</td>
+                      <td className="text-gray-300">{cliente.telefono}</td>
+                      <td>
+                        <span className={`badge ${getCategoriaColor(cliente.categoria)} text-white`}>
+                          {cliente.categoria === "frecuente"
+                            ? "Frecuente"
+                            : cliente.categoria === "mayorista"
+                              ? "Mayorista"
+                              : "Ocasional"}
+                        </span>
+                      </td>
+                      <td className="text-gray-300">{cliente.ultimaCompra || "N/A"}</td>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <button
+                            className="p-1 text-gray-300 hover:bg-blue-dark-700 rounded-md"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedCliente(cliente)
+                              handleOpenDialog(cliente)
+                            }}
+                          >
+                            <FiEdit className="h-4 w-4" />
+                          </button>
+                          <button
+                            className="p-1 text-red-500 hover:bg-blue-dark-700 rounded-md"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedCliente(cliente)
+                              setIsDeleteDialogOpen(true)
+                            }}
+                          >
+                            <FiTrash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filteredClientes.map((cliente) => (
-                      <tr key={cliente._id} onClick={() => handleSelectCliente(cliente)}>
-                        <td className="font-medium text-white">{cliente.nombre}</td>
-                        <td className="text-gray-300">{cliente.email}</td>
-                        <td className="text-gray-300">{cliente.telefono}</td>
-                        <td>
-                          <span className={`badge ${getCategoriaColor(cliente.categoria)} text-white`}>
-                            {cliente.categoria === "frecuente"
-                              ? "Frecuente"
-                              : cliente.categoria === "mayorista"
-                                ? "Mayorista"
-                                : "Ocasional"}
-                          </span>
-                        </td>
-                        <td className="text-gray-300">{cliente.ultimaCompra || "N/A"}</td>
-                        <td>
-                          <div className="flex items-center gap-2">
-                            <button
-                              className="p-1 text-gray-300 hover:bg-blue-dark-700 rounded-md"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setSelectedCliente(cliente)
-                                handleOpenDialog(cliente)
-                              }}
-                            >
-                              <FiEdit className="h-4 w-4" />
-                            </button>
-                            <button
-                              className="p-1 text-red-500 hover:bg-blue-dark-700 rounded-md"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setSelectedCliente(cliente)
-                                setIsDeleteDialogOpen(true)
-                              }}
-                            >
-                              <FiTrash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -353,28 +369,30 @@ const Clientes = () => {
                           <FiPlus className="mr-2 h-3 w-3" /> Nueva
                         </button>
                       </div>
-                      {interacciones.length > 0 ? (
+                      {interacciones.filter((i) => i.clienteId === selectedCliente.id).length > 0 ? (
                         <div className="space-y-3">
-                          {interacciones.map((interaccion) => (
-                            <div key={interaccion._id} className="rounded-md border border-blue-dark-700 p-3">
-                              <div className="flex justify-between">
-                                <span
-                                  className={`badge ${
-                                    interaccion.tipo === "llamada"
-                                      ? "bg-green-700"
-                                      : interaccion.tipo === "email"
-                                        ? "bg-blue-700"
-                                        : "bg-purple-700"
-                                  }`}
-                                >
-                                  {interaccion.tipo}
-                                </span>
-                                <span className="text-sm text-gray-400">{interaccion.fecha}</span>
+                          {interacciones
+                            .filter((i) => i.clienteId === selectedCliente.id)
+                            .map((interaccion) => (
+                              <div key={interaccion.id} className="rounded-md border border-blue-dark-700 p-3">
+                                <div className="flex justify-between">
+                                  <span
+                                    className={`badge ${
+                                      interaccion.tipo === "llamada"
+                                        ? "bg-green-700"
+                                        : interaccion.tipo === "email"
+                                          ? "bg-blue-700"
+                                          : "bg-purple-700"
+                                    }`}
+                                  >
+                                    {interaccion.tipo}
+                                  </span>
+                                  <span className="text-sm text-gray-400">{interaccion.fecha}</span>
+                                </div>
+                                <p className="mt-2 text-white">{interaccion.descripcion}</p>
+                                <p className="mt-1 text-sm text-gray-400">Por: {interaccion.usuario}</p>
                               </div>
-                              <p className="mt-2 text-white">{interaccion.descripcion}</p>
-                              <p className="mt-1 text-sm text-gray-400">Por: {interaccion.usuario}</p>
-                            </div>
-                          ))}
+                            ))}
                         </div>
                       ) : (
                         <p className="text-gray-400">No hay interacciones registradas.</p>

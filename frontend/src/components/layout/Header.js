@@ -1,13 +1,8 @@
-"use client"
-
-import { useContext } from "react"
 import { useLocation } from "react-router-dom"
 import { FiBell, FiSearch, FiUser } from "react-icons/fi"
-import { AuthContext } from "../../context/AuthContext"
 
 const Header = () => {
   const location = useLocation()
-  const { user, logout } = useContext(AuthContext)
 
   // Función para obtener el título basado en la ruta actual
   const getTitle = () => {
@@ -54,16 +49,14 @@ const Header = () => {
           </button>
           <div className="absolute right-0 mt-2 w-56 bg-blue-dark-800 text-white border border-blue-dark-700 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
             <div className="px-4 py-2 border-b border-blue-dark-700">
-              <p className="font-semibold">{user?.full_name || user?.username}</p>
+              <p className="font-semibold">Usuario Administrador</p>
             </div>
             <div className="py-1">
               <button className="w-full text-left px-4 py-2 hover:bg-blue-dark-700">Perfil</button>
               <button className="w-full text-left px-4 py-2 hover:bg-blue-dark-700">Configuración</button>
             </div>
             <div className="py-1 border-t border-blue-dark-700">
-              <button onClick={logout} className="w-full text-left px-4 py-2 hover:bg-blue-dark-700">
-                Cerrar Sesión
-              </button>
+              <button className="w-full text-left px-4 py-2 hover:bg-blue-dark-700">Cerrar Sesión</button>
             </div>
           </div>
         </div>

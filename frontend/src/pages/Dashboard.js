@@ -15,53 +15,49 @@ import {
   Tooltip,
   Legend,
 } from "chart.js"
-import axios from "axios"
-import { API_URL } from "../config"
 
 // Registrar componentes de ChartJS
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend)
 
 const Dashboard = () => {
-  const [dashboardData, setDashboardData] = useState({
-    totalClientes: 0,
-    ventasMensuales: 0,
-    ticketsAbiertos: 0,
-    totalProveedores: 0,
-  })
-
-  const [salesData, setSalesData] = useState([])
-  const [ticketData, setTicketData] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Datos de ejemplo para el dashboard
+  const dashboardData = {
+    totalClientes: 156,
+    ventasMensuales: 24850,
+    ticketsAbiertos: 12,
+    totalProveedores: 18,
+  }
+
+  // Datos de ejemplo para gráficos
+  const salesData = [
+    { name: "Ene", ventas: 12500 },
+    { name: "Feb", ventas: 15800 },
+    { name: "Mar", ventas: 18200 },
+    { name: "Abr", ventas: 16500 },
+    { name: "May", ventas: 19800 },
+    { name: "Jun", ventas: 22300 },
+    { name: "Jul", ventas: 24850 },
+  ]
+
+  const ticketData = [
+    { name: "Ene", resueltos: 65, pendientes: 28 },
+    { name: "Feb", resueltos: 59, pendientes: 48 },
+    { name: "Mar", resueltos: 80, pendientes: 40 },
+    { name: "Abr", resueltos: 81, pendientes: 19 },
+    { name: "May", resueltos: 56, pendientes: 96 },
+    { name: "Jun", resueltos: 55, pendientes: 27 },
+    { name: "Jul", resueltos: 40, pendientes: 32 },
+  ]
+
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        // Obtener datos del resumen del dashboard
-        const resumenResponse = await axios.get(`${API_URL}/reportes/dashboard/resumen`)
-        setDashboardData(resumenResponse.data)
+    // Simulamos carga de datos
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 1000)
 
-        // Obtener datos de ventas mensuales
-        const ventasResponse = await axios.get(`${API_URL}/reportes/ventas/por_mes`)
-        setSalesData(ventasResponse.data)
-
-        // Datos de ejemplo para tickets (en un sistema real, esto vendría de la API)
-        setTicketData([
-          { name: "Ene", resueltos: 65, pendientes: 28 },
-          { name: "Feb", resueltos: 59, pendientes: 48 },
-          { name: "Mar", resueltos: 80, pendientes: 40 },
-          { name: "Abr", resueltos: 81, pendientes: 19 },
-          { name: "May", resueltos: 56, pendientes: 96 },
-          { name: "Jun", resueltos: 55, pendientes: 27 },
-          { name: "Jul", resueltos: 40, pendientes: 32 },
-        ])
-      } catch (error) {
-        console.error("Error al obtener datos del dashboard:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchDashboardData()
+    return () => clearTimeout(timer)
   }, [])
 
   // Configuración para el gráfico de líneas (ventas)
