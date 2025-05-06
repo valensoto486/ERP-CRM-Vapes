@@ -5,29 +5,11 @@ const Header = () => {
   const location = useLocation()
 
   // Función para obtener el título basado en la ruta actual
-  const getTitle = () => {
-    const path = location.pathname.split("/")[1]
-    switch (path) {
-      case "dashboard":
-        return "Dashboard"
-      case "clientes":
-        return "Gestión de Clientes"
-      case "proveedores":
-        return "Gestión de Proveedores"
-      case "ventas":
-        return "Automatización de Ventas"
-      case "soporte":
-        return "Servicio al Cliente"
-      case "reportes":
-        return "Reportes y Análisis"
-      default:
-        return "Dashboard"
-    }
-  }
+  
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-blue-dark-900 px-6">
-      <h1 className="text-xl font-semibold text-white">{getTitle()}</h1>
+    <header className="flex h-16 items-center justify-between border-b bg-blue-dark-800 px-6">
+      <h1 className="text-xl font-semibold text-white"></h1>
 
       <div className="flex items-center gap-4">
         <div className="relative">
@@ -35,7 +17,7 @@ const Header = () => {
           <input
             type="search"
             placeholder="Buscar..."
-            className="w-64 bg-blue-dark-800 pl-8 text-white placeholder:text-gray-400 border-blue-dark-700 focus:outline-none focus:ring-2 focus:ring-blue-dark-500 rounded-md py-2 px-3"
+            className="w-64 bg-blue-dark-950 pl-8 text-white placeholder:text-gray-400 border-blue-dark-700 focus:outline-none focus:ring-2 focus:ring-blue-dark-500 rounded-md py-2 px-3"
           />
         </div>
 

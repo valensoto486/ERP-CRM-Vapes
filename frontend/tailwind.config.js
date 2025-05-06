@@ -45,10 +45,11 @@ module.exports = {
           300: "#6b9aff",
           400: "#427dff",
           500: "#1960ff",
-          600: "#0047e1",
-          700: "#0035a9",
-          800: "#002371",
-          900: "#001239",
+          600: "#0047e1", //boton 
+          700: "#0e1626", //bordes
+          800: "#232d42", //Color header tipo gris azul
+          900: "#0e1626", //color fondo azul
+          950: "#4d576aaf", //Color barra buscar
         },
         borderRadius: {
           lg: "var(--radius)",

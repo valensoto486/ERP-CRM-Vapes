@@ -236,10 +236,10 @@ const Soporte = () => {
 
         <div className="flex items-center gap-4">
           <div className="relative flex-1">
-            <FiSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+            <FiSearch className="absolute left-2.5 top-3.5 h-4 w-4 text-gray-400" />
             <input
               type="search"
-              placeholder="Buscar tickets..."
+              placeholder="    Buscar tickets..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="input pl-8"
