@@ -1,4 +1,4 @@
-# app/routes/clientes.py
+# Clientes API
 from fastapi import APIRouter, HTTPException
 from app.database import db
 from pydantic import BaseModel, Field
@@ -11,7 +11,8 @@ class Cliente(BaseModel):
     correo: str
     telefono: str
     direccion: str
-
+    categoria: str #mayorista, ocasional o frecuente 
+    notas: str = Field(default=None, max_length=500) 
 #Crear un cliente
 @router.post("/")
 def crear_cliente(cliente: Cliente):

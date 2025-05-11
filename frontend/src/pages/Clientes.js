@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import axios from "axios";
 import MainLayout from "../components/layout/MainLayout"
 import { FiPlus, FiSearch, FiEdit, FiTrash2, FiUser } from "react-icons/fi"
 
@@ -157,11 +158,25 @@ const Clientes = () => {
     setIsDialogOpen(true)
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // En una versión funcional, aquí se enviarían los datos al backend
-    setIsDialogOpen(false)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const clienteNuevo = {
+      nombre: formData.nombre,
+      correo: formData.email,
+      telefono: formData.telefono,
+      direccion: formData.categoria,
+    };
+  
+    try {
+      await axios.post("http://localhost:8000/clientes/", clienteNuevo);
+      alert("Cliente creado exitosamente");
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Error al crear cliente", error);
+    }
+  };
+  
 
   const handleDelete = () => {
     // En una versión funcional, aquí se eliminaría el cliente
