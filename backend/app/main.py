@@ -7,6 +7,7 @@ app = FastAPI()
 
 # Incluir rutas
 app.include_router(clientes.router, prefix="/clientes", tags=["Clientes"])
+app.include_router(proveedores_router.router, prefix="/proveedores", tags=["Proveedores"])
 
 @app.get("/")
 def read_root():
