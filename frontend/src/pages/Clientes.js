@@ -104,8 +104,9 @@ const Clientes = () => {
   // Formulario para cliente
   const [formData, setFormData] = useState({
     nombre: "",
-    email: "",
+    correo: "",
     telefono: "",
+    direccion: "",
     categoria: "ocasional",
     notas: "",
   })
@@ -141,7 +142,8 @@ const Clientes = () => {
     if (cliente) {
       setFormData({
         nombre: cliente.nombre,
-        email: cliente.email,
+        correo: cliente.correo,
+        direccion: cliente.direccion || "",
         telefono: cliente.telefono,
         categoria: cliente.categoria,
         notas: cliente.notas || "",
@@ -149,7 +151,8 @@ const Clientes = () => {
     } else {
       setFormData({
         nombre: "",
-        email: "",
+        correo: "",
+        direccion: "",
         telefono: "",
         categoria: "ocasional",
         notas: "",
@@ -163,9 +166,11 @@ const Clientes = () => {
   
     const clienteNuevo = {
       nombre: formData.nombre,
-      correo: formData.email,
+      correo: formData.correo,
       telefono: formData.telefono,
-      direccion: formData.categoria,
+      direccion: formData.direccion,
+      categoria: formData.categoria,
+      notas: formData.notas,
     };
   
     try {
@@ -456,10 +461,10 @@ const Clientes = () => {
                       Email
                     </label>
                     <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
+                      id="correo"
+                      name="correo"
+                      type="correo"
+                      value={formData.correo}
                       onChange={handleInputChange}
                       className="input"
                       required
@@ -496,6 +501,20 @@ const Clientes = () => {
                       <option value="ocasional">Ocasional</option>
                     </select>
                   </div>
+                </div>
+                <div className="grid gap-2">
+                  <label htmlFor="direccion" className="text-white">
+                    Dirección
+                  </label>
+                  <textarea
+                    id="direccion"
+                    name="direccion"
+                    value={formData.direccion}
+                    onChange={handleInputChange}
+                    placeholder="Dirección del cliente..."
+                    className="input"
+                    rows="3"
+                  />
                 </div>
                 <div className="grid gap-2">
                   <label htmlFor="notas" className="text-white">
