@@ -1,105 +1,34 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios";
 import MainLayout from "../components/layout/MainLayout"
 import { FiPlus, FiSearch, FiEdit, FiTrash2, FiUser } from "react-icons/fi"
 
 const Clientes = () => {
-  // Datos de ejemplo
-  const clientesData = [
-    {
-      id: 1,
-      nombre: "Juan Pérez",
-      email: "juan.perez@ejemplo.com",
-      telefono: "555-123-4567",
-      categoria: "frecuente",
-      ultimaCompra: "2023-04-15",
-      totalCompras: 12,
-      valorTotal: 1250.5,
-      notas: "Cliente frecuente de vaporizadores premium.",
-    },
-    {
-      id: 2,
-      nombre: "María López",
-      email: "maria.lopez@ejemplo.com",
-      telefono: "555-987-6543",
-      categoria: "mayorista",
-      ultimaCompra: "2023-04-10",
-      totalCompras: 45,
-      valorTotal: 5680.75,
-      notas: "Distribuidor para la zona norte.",
-    },
-    {
-      id: 3,
-      nombre: "Carlos Rodríguez",
-      email: "carlos.rodriguez@ejemplo.com",
-      telefono: "555-456-7890",
-      categoria: "ocasional",
-      ultimaCompra: "2023-03-22",
-      totalCompras: 3,
-      valorTotal: 320.25,
-      notas: "",
-    },
-    {
-      id: 4,
-      nombre: "Ana Martínez",
-      email: "ana.martinez@ejemplo.com",
-      telefono: "555-789-0123",
-      categoria: "frecuente",
-      ultimaCompra: "2023-04-18",
-      totalCompras: 8,
-      valorTotal: 950.0,
-      notas: "Prefiere productos con sabores frutales.",
-    },
-    {
-      id: 5,
-      nombre: "Roberto Gómez",
-      email: "roberto.gomez@ejemplo.com",
-      telefono: "555-234-5678",
-      categoria: "mayorista",
-      ultimaCompra: "2023-04-05",
-      totalCompras: 32,
-      valorTotal: 4200.5,
-      notas: "Distribuidor para tiendas especializadas.",
-    },
-  ]
+  
+  const [clientes, setClientes] = useState([]);
+  const [interacciones, setInteracciones] = useState([]); 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCliente, setSelectedCliente] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isNewInteractionDialogOpen, setIsNewInteractionDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("info");
+  const [filteredClientes, setFilteredClientes] = useState([]);
+  
+  useEffect(() => {
+    // Realizamos la solicitud HTTP cuando el componente se monte
+    axios.get('http://localhost:8000/clientes') // URL de tu backend
+      .then(response => {
+        setClientes(response.data); // Guardamos los datos de los clientes en el estado
+        setFilteredClientes(response.data); // También los guardamos en el estado de clientes filtrados si necesitas hacer alguna operación
+      })
+      .catch(error => {
+        console.error('Error al obtener los clientes:', error);
+      });
+  }, []); // Solo se ejecuta una vez cuando el componente se monta
 
-  const interaccionesData = [
-    {
-      id: 1,
-      clienteId: 1,
-      tipo: "llamada",
-      descripcion: "Llamada para informar sobre nuevos productos",
-      fecha: "2023-04-10",
-      usuario: "Admin",
-    },
-    {
-      id: 2,
-      clienteId: 1,
-      tipo: "email",
-      descripcion: "Envío de catálogo actualizado",
-      fecha: "2023-04-05",
-      usuario: "Admin",
-    },
-    {
-      id: 3,
-      clienteId: 2,
-      tipo: "visita",
-      descripcion: "Visita a su tienda para mostrar nuevos modelos",
-      fecha: "2023-04-12",
-      usuario: "Vendedor",
-    },
-  ]
-
-  const [clientes] = useState(clientesData)
-  const [interacciones] = useState(interaccionesData)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCliente, setSelectedCliente] = useState(null)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [isNewInteractionDialogOpen, setIsNewInteractionDialogOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("info")
 
   // Formulario para cliente
   const [formData, setFormData] = useState({
@@ -194,14 +123,6 @@ const Clientes = () => {
     // En una versión funcional, aquí se guardaría la interacción
     setIsNewInteractionDialogOpen(false)
   }
-
-  // Filtrar clientes según término de búsqueda
-  const filteredClientes = clientes.filter(
-    (cliente) =>
-      cliente.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cliente.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cliente.telefono.includes(searchTerm),
-  )
 
   const getCategoriaColor = (categoria) => {
     switch (categoria) {
@@ -389,10 +310,10 @@ const Clientes = () => {
                           <FiPlus className="mr-2 h-3 w-3" /> Nueva
                         </button>
                       </div>
-                      {interacciones.filter((i) => i.clienteId === selectedCliente.id).length > 0 ? (
+                      {interacciones.filter((i) => i.clienteId === selectedCliente.correo).length > 0 ? (
                         <div className="space-y-3">
                           {interacciones
-                            .filter((i) => i.clienteId === selectedCliente.id)
+                            .filter((i) => i.clienteId === selectedCliente.correo)
                             .map((interaccion) => (
                               <div key={interaccion.id} className="rounded-md border border-blue-dark-700 p-3">
                                 <div className="flex justify-between">
