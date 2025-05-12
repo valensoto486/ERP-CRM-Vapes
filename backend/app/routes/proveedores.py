@@ -2,6 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from app.database import db
 from pydantic import BaseModel, Field, EmailStr
+from typing import List, Optional
 
 router = APIRouter()
 proveedores_collection = db["proveedores"]
@@ -10,7 +11,8 @@ class Proveedor(BaseModel):
     nombre: str
     contacto: str
     telefono: str
-    correo: EmailStr #ID
+    correo: str #ID
+    direccion: str
     productos: List[str] = []
     condiciones_pago: Optional[str] = None
     
@@ -28,11 +30,17 @@ def crear_proveedor(proveedor: Proveedor):
 @router.get("/")
 def obtener_proveedores():
     proveedores = []
-    for proveedor in proveedores_collection.find():
-        proveedor["id"] = str(proveedor["_id"])
-        del proveedor["_id"]
-        proveedores.append(proveedor)
+    try:
+        for proveedor in proveedores_collection.find():
+            proveedor["id"] = proveedor["correo"]  # Utilizamos el correo como el ID
+            del proveedor["_id"]  
+            proveedores.append(proveedor)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener proveedores: {str(e)}")
+    
     return proveedores
+
+
 
 #Obtener un proveedor por ID (correo)
 @router.get("/{correo}")

@@ -1,76 +1,48 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react";
 import MainLayout from "../components/layout/MainLayout"
 import { FiPlus, FiSearch, FiEdit, FiTrash2, FiPackage } from "react-icons/fi"
+import axios from "axios"
 
 const Proveedores = () => {
-  // Datos de ejemplo
-  const proveedoresData = [
-    {
-      id: 1,
-      nombre: "VapeTech Inc.",
-      contacto: "Roberto García",
-      email: "roberto@vapetech.com",
-      telefono: "555-111-2233",
-      direccion: "Calle Principal 123, Ciudad",
-      condicionesPago: "30 días",
-      productos: ["Vaporizadores Premium", "Líquidos Orgánicos", "Accesorios"],
-    },
-    {
-      id: 2,
-      nombre: "CloudMasters",
-      contacto: "Laura Sánchez",
-      email: "laura@cloudmasters.com",
-      telefono: "555-444-5566",
-      direccion: "Av. Secundaria 456, Ciudad",
-      condicionesPago: "15 días",
-      productos: ["Vaporizadores Económicos", "Líquidos Variados", "Repuestos"],
-    },
-    {
-      id: 3,
-      nombre: "VapeWorld",
-      contacto: "Carlos Mendoza",
-      email: "carlos@vapeworld.com",
-      telefono: "555-777-8899",
-      direccion: "Plaza Central 789, Ciudad",
-      condicionesPago: "Pago inmediato",
-      productos: ["Vaporizadores de Lujo", "Ediciones Limitadas", "Kits Completos"],
-    },
-    {
-      id: 4,
-      nombre: "EcoVape",
-      contacto: "Ana Torres",
-      email: "ana@ecovape.com",
-      telefono: "555-222-3344",
-      direccion: "Calle Verde 321, Ciudad",
-      condicionesPago: "45 días",
-      productos: ["Vaporizadores Ecológicos", "Líquidos Naturales", "Accesorios Biodegradables"],
-    },
-    {
-      id: 5,
-      nombre: "TechSmoke",
-      contacto: "Miguel Ángel",
-      email: "miguel@techsmoke.com",
-      telefono: "555-666-7788",
-      direccion: "Av. Tecnológica 654, Ciudad",
-      condicionesPago: "30 días",
-      productos: ["Vaporizadores Inteligentes", "Líquidos Premium", "Gadgets"],
-    },
-  ]
+  
 
-  const [proveedores] = useState(proveedoresData)
+  const [proveedores, setProveedores] = useState([]);
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProveedor, setSelectedProveedor] = useState(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("info")
+  const [filteredProveedores, setFilteredProveedores] = useState([]);
+
+  useEffect(() => {
+    const obtenerProveedores = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/proveedores/");
+        setProveedores(response.data);
+        setFilteredProveedores(response.data); // al inicio muestra todos
+      } catch (error) {
+        console.error("Error al obtener proveedores:", error);
+      }
+    };
+
+    obtenerProveedores();
+  }, []);
+
+    useEffect(() => {
+    const resultado = proveedores.filter((prov) =>
+      prov.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProveedores(resultado);
+  }, [searchTerm, proveedores]);
+
 
   // Formulario para proveedor
   const [formData, setFormData] = useState({
     nombre: "",
     contacto: "",
-    email: "",
+    correo: "",
     telefono: "",
     direccion: "",
     condicionesPago: "30 días",
@@ -81,6 +53,38 @@ const Proveedores = () => {
     setSelectedProveedor(proveedor)
     setActiveTab("info")
   }
+
+
+  const createProveedor = async (proveedor) => {
+  try {
+    const response = await axios.post("http://localhost:8000/proveedores/", proveedor)
+    console.log("Proveedor creado:", response.data)
+
+    // Recargar la lista de proveedores
+    const nuevosProveedores = await axios.get("http://localhost:8000/proveedores/");
+    setProveedores(nuevosProveedores.data);
+    setFilteredProveedores(nuevosProveedores.data);
+
+    // cerrar el modal
+    setIsDialogOpen(false);
+
+    // limpiar el formulario
+    setFormData({
+      nombre: "",
+      contacto: "",
+      correo: "",
+      telefono: "",
+      direccion: "",
+      condicionesPago: "30 días",
+      productos: [],
+    });
+
+  } catch (error) {
+    console.error("Error al crear proveedor:", error)
+  }
+}
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -104,7 +108,7 @@ const Proveedores = () => {
       setFormData({
         nombre: proveedor.nombre,
         contacto: proveedor.contacto,
-        email: proveedor.email,
+        correo: proveedor.correo,
         telefono: proveedor.telefono,
         direccion: proveedor.direccion,
         condicionesPago: proveedor.condicionesPago,
@@ -114,7 +118,7 @@ const Proveedores = () => {
       setFormData({
         nombre: "",
         contacto: "",
-        email: "",
+        correo: "",
         telefono: "",
         direccion: "",
         condicionesPago: "30 días",
@@ -126,9 +130,20 @@ const Proveedores = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // En una versión funcional, aquí se enviarían los datos al backend
-    setIsDialogOpen(false)
+
+    const proveedor = {
+      nombre: formData.nombre,
+      contacto: formData.contacto,
+      correo: formData.correo,
+      telefono: formData.telefono,
+      direccion: formData.direccion,
+      condiciones_pago: formData.condicionesPago,
+      productos: formData.productos,
+    }
+
+    createProveedor(proveedor)
   }
+
 
   const handleDelete = () => {
     // En una versión funcional, aquí se eliminaría el proveedor
@@ -136,13 +151,6 @@ const Proveedores = () => {
     setIsDeleteDialogOpen(false)
   }
 
-  // Filtrar proveedores según término de búsqueda
-  const filteredProveedores = proveedores.filter(
-    (proveedor) =>
-      proveedor.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proveedor.contacto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proveedor.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
 
   return (
     <MainLayout>
@@ -190,7 +198,7 @@ const Proveedores = () => {
                 </thead>
                 <tbody>
                   {filteredProveedores.map((proveedor) => (
-                    <tr key={proveedor.id} onClick={() => handleSelectProveedor(proveedor)}>
+                    <tr key={proveedor.correo} onClick={() => handleSelectProveedor(proveedor)}>
                       <td className="font-medium text-white">{proveedor.nombre}</td>
                       <td className="text-gray-300">{proveedor.contacto}</td>
                       <td className="text-gray-300">{proveedor.email}</td>
@@ -351,14 +359,14 @@ const Proveedores = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <label htmlFor="email" className="text-white">
+                    <label htmlFor="correo" className="text-white">
                       Email
                     </label>
                     <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
+                      id="correo"
+                      name="correo"
+                      type="correo"
+                      value={formData.correo}
                       onChange={handleInputChange}
                       className="input"
                       required

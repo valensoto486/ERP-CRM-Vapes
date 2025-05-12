@@ -8,7 +8,7 @@ clientes_collection = db["clientes"]
 
 class Cliente(BaseModel):
     nombre: str
-    correo: EmailStr #ID
+    correo: str #ID
     telefono: str
     direccion: str
     categoria: str #mayorista, ocasional o frecuente 

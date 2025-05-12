@@ -19,10 +19,10 @@ const Clientes = () => {
   
   useEffect(() => {
     // Realizamos la solicitud HTTP cuando el componente se monte
-    axios.get('http://localhost:8000/clientes') // URL de tu backend
+    axios.get('http://localhost:8000/clientes') 
       .then(response => {
         setClientes(response.data); // Guardamos los datos de los clientes en el estado
-        setFilteredClientes(response.data); // También los guardamos en el estado de clientes filtrados si necesitas hacer alguna operación
+        setFilteredClientes(response.data); // También los guardamos en el estado de clientes filtrados 
       })
       .catch(error => {
         console.error('Error al obtener los clientes:', error);

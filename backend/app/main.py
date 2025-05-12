@@ -2,12 +2,15 @@
 from fastapi import FastAPI
 from app.routes import clientes
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import EmailStr
+from app.routes import proveedores
+from typing import List, Optional
 
 app = FastAPI()
 
 # Incluir rutas
 app.include_router(clientes.router, prefix="/clientes", tags=["Clientes"])
-app.include_router(proveedores_router.router, prefix="/proveedores", tags=["Proveedores"])
+app.include_router(proveedores.router, prefix="/proveedores", tags=["Proveedores"])
 
 @app.get("/")
 def read_root():
